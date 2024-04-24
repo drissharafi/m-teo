@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link href="https://tomlutzenberger.github.io/meteocons.css/dist/meteocons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+
+        .weather-panel {
+            background-image: url("https://unsplash.it/600/400?image=1043&blur");
+            background-size: cover;
+            border-radius: 20px;
+            box-shadow: 25px 25px 40px 0px rgba(0, 0, 0, 0.33);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .weather-panel small {
+            color: inherit;
+            font-size: 50%;
+        }
+
+        .weather-panel ul.forecast > li {
+            border-top: 1px solid #fff;
+        }
+
+        .weather-panel .temperature > span {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="form-group">
+            <input class="form-control" id="cityInput" style="width: 50%; margin: 25px;" placeholder="Enter city" type="text" aria-label="Enter the city">
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4 weather-panel">
+                    <div class="col-xs-6">
+                        <h2 id="cityname">Lucerne<br></h2>
+                            <h2>May 24, 2016</h2>
+                        <p class="h3"><i class="mi mi-fw mi-lg mi-rain-heavy"></i> Rainy</p>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <div class="h1 temperature">
+                            <span>12°</span>
+                            <br>
+                            <small>8° / 13°</small>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <ul class="list-inline row forecast">
+                            <li class="col-xs-4 col-sm-2 text-center">
+                                <h3 class="h5">Wed</h3>
+                                <p><i class="mi mi-fw mi-2x mi-cloud-sun"></i><br>9°/18°</p>
+                            </li>
+                            <!-- Repeat similar structure for other days -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cityInput = document.getElementById('cityInput');
+            const apiKey = '9aa99c39954c3d4b5b856795f1508ec4';
+            let days = [];
+
+            const today = new Date();
+
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            for (let i = 0; i <= 6; i++) {
+                const newDate = new Date(today);
+                newDate.setDate(newDate.getDate() + i + 1);
+                days.push(formatDate(newDate));
+            }
+
+            cityInput.addEventListener('change', async function () {
+                const selectedCity = cityInput.value;
+
+                for (const day of days) {
+                    const url = `https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&appid=${apiKey}&units=metric&dt=${day}`;
+
+                    try {
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        console.log(`Weather for ${selectedCity} on ${day}:`, data);
+                        // Add your logic here to display or process the weather data
+                    } catch (error) {
+                        console.error(`Error fetching weather data for ${selectedCity} on ${day}:`, error);
+                    }
+                }
+            });
+
+            window.addEventListener("DOMContentLoaded", () => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        function (position) {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+                            const geoUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+                            fetchWeatherData(geoUrl);
+                            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                        },
+                        function (error) {
+                            console.error("Error getting location: " + error.message);
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0,
+                        }
+                    );
+                } else {
+                    console.log("Geolocation is not supported by this browser.");
+                }
+            });
+
+            async function fetchWeatherData(url) {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    console.log('Weather data:', data);
+                    // Add your logic here to display or process the weather data
+                } catch (error) {
+                    console.error('Error fetching weather data:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
