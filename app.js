@@ -145,39 +145,7 @@ function updateChart() {
         }
     });
 }
-/*async function fetchForecastData(url) {
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log('Forecast data:', data);
-        
-        // Update forecast for each day
-        const forecastList = data.list.slice(1, 7); // Exclude the current day
-        
-        forecastList.forEach((forecast, index) => {
-            const dayElement = document.querySelector(`.forecast li:nth-child(${index + 1}) h3`);
-            const temperatureElement = document.querySelector(`.forecast li:nth-child(${index + 1}) p`);
-            
-            const forecastDate = new Date(forecast.dt * 1000);
-            console.log(forecastDate);
-            const dayName = formatDate(forecastDate, { weekday: 'long' });
-            console.log(dayName);
-            dayElement.innerText = dayName;
-            temperatureElement.innerText = `${forecast.main.temp_min}°/${forecast.main.temp_max}°`;
-            
-        // Extract forecast data
-            data.list.forEach((forecast) => {
-                const forecastDate = new Date(forecast.dt * 1000);
-                forecastDays.push(formatDate(forecastDate));
-                forecastTemperatureData.push(forecast.main.temp);
-            });
-            // Update chart
-        updateChart();
-        })
-    } catch (error) {
-        console.error('Error fetching forecast data:', error);
-    }
-}*/
+
 
 
 
